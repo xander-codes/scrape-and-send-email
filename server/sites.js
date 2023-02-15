@@ -1,7 +1,3 @@
-const runEveryMinute = require('node-cron');
-const {scrape} = require("./scrape");
-const {sendEmail} = require("./email");
-
 sites = [
     {
         url: "https://www.emag.ro/procesor-amd-ryzentm-5-5600g-19mb-3-9ghz-socket-am4-wraith-stealth-100-100000252box/pd/DZRSRHMBM/?X-Search-Id=bf53b3600fc09ca707d7&X-Product-Id=81694623&X-Search-Page=1&X-Search-Position=0&X-Section=search&X-MB=0&X-Search-Action=view",
@@ -18,15 +14,6 @@ sites = [
         selectorPrice: "body > div.wrapper > div > div.clearfix.js-product-detail-page > div:nth-child(1) > div.row.product-details > div > div.col-md-4.col-sm-6.col-xs-12.add-to-cart-wrapper > div.product-info.js-product-info > table > tbody > tr > th.pdp-table-th.price-container-pdp > div > span.current-price",
         selectorTitle: "body > div.wrapper > div > div.clearfix.js-product-detail-page > div:nth-child(1) > div.row.product-details > div > div.col-md-4.col-sm-6.col-xs-12.add-to-cart-wrapper > div.product-info.js-product-info > h1"
     }
-];
+]
 
-//this runs every minute
-//for prod modify the crontab to your liking
-runEveryMinute.schedule('* * * * *', async function () {
-    let acc = ""
-    for (let i = 0; i < sites.length; i++) {
-        const res = await scrape(sites[i].url, sites[i].selectorPrice, sites[i].selectorTitle)
-        acc += res + "\n"
-    }
-    sendEmail(acc)
-});
+module.exports = {sites}

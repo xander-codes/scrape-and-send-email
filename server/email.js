@@ -8,8 +8,8 @@ function sendEmail(body) {
         host: 'smtp.ethereal.email',
         port: 587,
         auth: {
-            user: 'wanda53@ethereal.email',
-            pass: '27uxshRzFZKgjeqNsE'
+            user: 'jadon.wyman43@ethereal.email',
+            pass: 'Y4NJKqXVMdRbzBmjtG'
         }
     });
 
