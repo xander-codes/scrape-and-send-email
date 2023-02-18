@@ -1,0 +1,10 @@
+
+
+::placeholder {
+    font-style: italic;
+    font-size: smaller;
+}
+
+::selection {
+    background-color: aquamarine;
+}
