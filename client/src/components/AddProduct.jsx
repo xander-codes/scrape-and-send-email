@@ -1,27 +1,23 @@
 import React, {useState} from 'react';
 import '../App.css'
+import {SITES} from "../store";
+import {useAtom} from "jotai";
+import {getAllProducts, addProduct} from "../dbActions";
 
-const BASE_URL = import.meta.env.VITE_BASE_URL;
-
-function AddProduct({getAllProducts}) {
+function AddProduct() {
     const [link, setLink] = useState("")
     const [priceSelector, setPriceSelector] = useState("")
+    const [, setSites] = useAtom(SITES)
+
+    function clearInputs() {
+        setLink("");
+        setPriceSelector("");
+    }
 
     async function submit() {
-        const response = await fetch(BASE_URL, {
-            method: 'POST',
-            body: JSON.stringify({
-                link,
-                priceSelector
-            }),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        const data = await response.json();
-        // location.reload()
-        getAllProducts()
-        console.log(data);
+        await addProduct(link, priceSelector);
+        clearInputs();
+        setSites(await getAllProducts())
     }
 
 
@@ -41,7 +37,7 @@ function AddProduct({getAllProducts}) {
                     <label>
                         Product price selector
                         <input type="text" id="price" name="price" required
-                               placeholder="13.50"
+                               placeholder="right click price element > in inspect right click on element > copy selector"
                                onChange={(e) => setPriceSelector(e.target.value)}
                                value={priceSelector}
                         />
@@ -49,8 +45,7 @@ function AddProduct({getAllProducts}) {
 
                     <label>
                         Add another
-                        <button className="outline contrast"
-                                style={{"marginTop": "5px", "borderColor": "#F7AE1E" }}
+                        <button style={{"marginTop": "5px", "borderColor": "#F7AE1E", backgroundColor: "#F7AE1E"}}
                                 role="submit"
                                 onClick={submit}>Add</button>
                     </label>

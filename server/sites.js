@@ -12,9 +12,3 @@ sites = [
         selectorPrice: "body > div.wrapper > div > div.clearfix.js-product-detail-page > div:nth-child(1) > div.row.product-details > div > div.col-md-4.col-sm-6.col-xs-12.add-to-cart-wrapper > div.product-info.js-product-info > table > tbody > tr > th.pdp-table-th.price-container-pdp > div > span.current-price"
     }
 ]
-
-function addSite(object) {
-    sites.push(object);
-}
-
-module.exports = {sites, addSite}

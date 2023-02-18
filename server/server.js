@@ -1,38 +1,81 @@
 const express = require('express');
 const cors = require('cors');
 const server = express();
-const {runScheduler} = require('./run')
-let {addSite, sites} = require('./sites')
+const {connectToDb, getDb} = require("./db");
+const {ObjectId} = require("mongodb");
+const cron = require("node-cron");
+const {scrape} = require("./scrape");
+const {sendEmail} = require("./email");
 
 server.use(cors())
 server.use(express.json())
 
-
 const PORT = 5000;
 
-server.get('/get', function (req, res, next) {
-    res.json(sites)
+let db;
+
+connectToDb((err) => {
+    if (!err) {
+        server.listen(PORT, function () {
+            console.log(`server started on http://localhost:${PORT}/`)
+        })
+        db = getDb()
+    }
 })
 
-server.delete("/delete", function (req, res, next) {
-    sites = sites.filter(s => s.url !== req.body.url)
-    res.json("deleted")
-    console.log("deleted " + req.body.url)
+cron.schedule("* * * * *", async function () {
+    const products = await db.collection('products')
+        .find()
+        .toArray();
+    let acc = ""
+    try {
+        for (const item of products) {
+            const res = await scrape(item.link, item.priceSelector)
+            acc += res + "\n"
+        }
+    } catch (err) {
+        console.log(err.message);
+    }
+    sendEmail(acc)
+});
+
+server.get('/products', (req, res) => {
+    let products = []
+    db.collection('products')
+        .find()
+        .forEach(b => products.push(b))
+        .then(() => {
+            res.status(200).json(products)
+        })
+        .catch(() => {
+            res.status(500).json({error: 'could not fetch products'})
+        })
 })
 
-server.post('/', function (req, res, next) {
-    const url = req.body.link
-    const selector = req.body.priceSelector
-    addSite({
-        url: url,
-        selectorPrice: selector
-    })
-    res.json({msg: "added"})
-    console.log("added " + url)
-    console.log(sites)
+server.post('/products', (req, res) => {
+    const product = req.body;
+    db.collection('products')
+        .insertOne(product)
+        .then(result => {
+            res.status(201).json(product)
+        })
+        .catch(err => {
+            res.status(500).json({error: 'could not add a product'})
+        })
 })
 
-server.listen(PORT, function () {
-    // runScheduler()
-    console.log(`CORS-enabled web server listening on port ${PORT}`)
+server.delete('/products/:id', (req, res) => {
+    const id = req.params.id
+    if (ObjectId.isValid(id)) {
+        db.collection('products')
+            .deleteOne({_id: new ObjectId(id)})
+            .then(doc => {
+                res.status(200).json(doc)
+            })
+            .catch(err => {
+                res.status(500).json({error: 'could not delete'})
+            })
+    } else {
+        res.status(500).json({error: 'Not a valid id'})
+    }
 })

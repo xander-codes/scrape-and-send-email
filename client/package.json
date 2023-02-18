@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@picocss/pico": "^1.5.7",
+    "jotai": "^2.0.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

@@ -1,9 +1,12 @@
 import React from 'react';
 import DeleteIcon from "./Delete";
+import {SITES} from "../store";
+import {useAtom} from "jotai";
+import {deleteFromDb, getAllProducts} from "../dbActions";
 
-const BASE_URL = import.meta.env.VITE_BASE_URL;
+const Product = ({id, url, selectorPrice}) => {
 
-const Product = ({url, selectorPrice}) => {
+    const [, setSites] = useAtom(SITES)
 
     function ellipsify(str, end) {
         if (str.length > 10) {
@@ -13,17 +16,9 @@ const Product = ({url, selectorPrice}) => {
         }
     }
 
-    async function handleDelete(url) {
-        const response = await fetch(BASE_URL + "delete", {
-            method: "DELETE",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ url: url})
-        })
-        const data = await response.json();
-        console.log(data)
-        // location.reload()
+    async function handleDelete(id) {
+        await deleteFromDb(id);
+        setSites(await getAllProducts())
     }
 
     return (
@@ -31,11 +26,13 @@ const Product = ({url, selectorPrice}) => {
             <main className="container">
                 <article>
                     {ellipsify(url, 100)}
+                    {/*{url}*/}
                     <hr/>
                     {ellipsify(selectorPrice, 40)}
+                    {/*{selectorPrice}*/}
                     <hr/>
-                    <div style={{ display: "flex", justifyContent: "end"}}>
-                        <a onClick={()=>handleDelete(url)}><DeleteIcon style={{"color": "#ED571C", resizeBy: 20}}/></a>
+                    <div style={{display: "flex", justifyContent: "end"}}>
+                        <a onClick={() => handleDelete(id)}><DeleteIcon style={{"color": "#ED571C", resizeBy: 20}}/></a>
                     </div>
                 </article>
             </main>
