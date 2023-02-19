@@ -1,6 +1,5 @@
 const nodemailer = require('nodemailer');
 
-
 //for testing purpose use https://ethereal.email/ and check the "Messages" section to see sent emails
 //for prod configure your gmail
 function sendEmail(body) {
@@ -8,8 +7,8 @@ function sendEmail(body) {
         host: 'smtp.ethereal.email',
         port: 587,
         auth: {
-            user: 'annabell.bruen@ethereal.email',
-            pass: 'pYG3PRGfWRrFMJTKAG'
+            user: 'reyna5@ethereal.email',
+            pass: 'ups7KxM5JUrCfa7bGm'
         }
     });
 

@@ -1,16 +1,18 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const server = express();
 const {connectToDb, getDb} = require("./db");
 const {ObjectId} = require("mongodb");
 const cron = require("node-cron");
 const {scrape} = require("./scrape");
 const {sendEmail} = require("./email");
 
+const server = express();
+
 server.use(cors())
 server.use(express.json())
 
-const PORT = 5000;
+const PORT = process.env.PORT;
 
 let db;
 
